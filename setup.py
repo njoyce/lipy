@@ -7,7 +7,10 @@ setup_args = dict(
     description='Python API wrapper for Linode - https://www.linode.com',
     maintainer='Nick Joyce',
     maintainer_email='nick@boxdesign.co.uk',
-    packages=find_packages('.')
+    packages=find_packages('.'),
+    install_requires=[
+        'requests'
+    ]
 )
 
 
