@@ -45,7 +45,7 @@ def load_datacenters(api_key):
             'avail.datacenters'
         )
 
-        cache.write.to_cache('datacenters', result)
+        cache.write_to_cache('datacenters', result)
 
     return [Datacenter.from_json(api_key, data) for data in result]
 
