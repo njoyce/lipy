@@ -88,8 +88,9 @@ class Linode(base.BaseObject):
 
         return addr
 
+    @property
     def disks(self):
-        return disk.get_by_linode(self.api_key, self.id)
+        return list(disk.get_by_linode(self.api_key, self.id))
 
     def remove(self, skip_check):
         self.client(
