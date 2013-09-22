@@ -94,6 +94,8 @@ def filter(items, query):
         if query == obj:
             return obj
 
+    raise LookupError('{} not found'.format(query))
+
 
 class APIBatcher(object):
     def __init__(self, api_key):
