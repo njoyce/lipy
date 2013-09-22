@@ -1,4 +1,4 @@
-from . import base
+from . import base, job
 
 
 class Disk(base.BaseObject):
@@ -35,10 +35,12 @@ class Disk(base.BaseObject):
             DiskID=self.id
         )
 
-        if not block:
-            return
+        delete_job = job.get(self.api_key, self.linode_id, response['JobID'])
 
-        base.wait_for_jobs(self.api_key, self.linode_id, response['JobID'])
+        if block:
+            delete_job.wait()
+
+        return delete_job
 
     def update(self):
         self.make_call(
@@ -59,10 +61,12 @@ class Disk(base.BaseObject):
 
         self.size = new_size
 
-        if not block:
-            return
+        resize_job = job.get(self.api_key, self.linode_id, response['JobID'])
 
-        base.wait_for_jobs(self.api_key, self.linode_id, response['JobID'])
+        if block:
+            resize_job.wait()
+
+        return resize_job
 
 
 def get_by_linode(api_key, linode_id):
@@ -75,7 +79,7 @@ def get_by_linode(api_key, linode_id):
         LinodeID=linode_id
     )
 
-    for data in response:
+    for data in response['DATA']:
         yield Disk.from_json(api_key, data)
 
 
@@ -92,12 +96,15 @@ def _get_disk_from_response(api_key, linode_id, response, block):
     if not disk:
         raise RuntimeError('Could not find disk from Linode API')
 
-    if not block:
-        return disk, job_id
+    disk_job = job.get(api_key, linode_id, job_id)
 
-    base.wait_for_jobs(api_key, linode_id, job_id)
+    if not disk_job:
+        return disk, None
 
-    return disk
+    if block:
+        disk_job.wait()
+
+    return disk, disk_job
 
 
 def create_from_distribution(api_key, linode_id, distribution_id, label, size,
