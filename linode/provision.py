@@ -2,13 +2,16 @@ from . import config as linode_config
 from . import datacenter as linode_datacenter
 from . import disk as linode_disk
 from . import distribution as linode_distribution
+from . import ip as linode_ip
 from . import kernel as linode_kernel
-from . import linode
 from . import plan as linode_plan
+
+from . import linode
 
 
 def provision(api_key, root_password, datacenter, distribution, plan='1024',
-              kernel=None, disk_size=None, swap=256, payment_term=1):
+              kernel=None, disk_size=None, swap=256, payment_term=1,
+              private_ip=True):
     """
     Create and boot a linode
 
@@ -27,6 +30,7 @@ def provision(api_key, root_password, datacenter, distribution, plan='1024',
         for the plan.
     :param swap: How much swap you want to create.
     :param payment_term: 1 = monthly, 12 = yearly, 24 = biannually
+    :param private_ip: Whether to create a LAN IP. Defaults to True
     """
     datacenter = linode_datacenter.get_datacenter(api_key, datacenter)
     plan = linode_plan.get_plan(api_key, plan)
@@ -66,6 +70,9 @@ def provision(api_key, root_password, datacenter, distribution, plan='1024',
             distribution,
             kernel
         )
+
+        if private_ip:
+            linode_ip.add_private(api_key, linode_instance.id)
 
         linode_instance.boot()
     except:
