@@ -41,7 +41,7 @@ class Job(base.BaseObject):
         if self.finished:
             return self.job
 
-        finished_job = waitany(self.api_key, self.linode_id, self.job_id)
+        finished_job = waitany(self.api_key, self.linode_id, self.id)
 
         self.__dict__.clear()
         self.__dict__.update(finished_job.__dict__)
