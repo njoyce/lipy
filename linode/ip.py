@@ -3,7 +3,7 @@ from . import base
 
 class IP(base.BaseObject):
     def __init__(self, api_key, id, linode_id, address, public):
-        super(IP, api_key, id)
+        super(IP, self).__init__(api_key, id)
 
         self.linode_id = linode_id
         self.address = address
