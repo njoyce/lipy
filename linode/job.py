@@ -44,7 +44,7 @@ class Job(base.BaseObject):
         Wait for the job to finish
         """
         if self.finish:
-            return self.job
+            return self
 
         finished_job = waitany(self.api_key, self.linode_id, self.id)
 
@@ -53,6 +53,8 @@ class Job(base.BaseObject):
 
         if not self.success:
             raise JobError(self)
+
+        return self
 
 
 def convert_to_job_id(value):
