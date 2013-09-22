@@ -84,7 +84,7 @@ def iterate_results(batched_response):
 
         if errors:
             # yes we're yielding an exception
-            yield Exception(errors[1])
+            yield Exception(errors[0])
 
         yield response['DATA']
 
