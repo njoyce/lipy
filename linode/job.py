@@ -4,11 +4,11 @@ from . import base
 
 
 class Job(base.BaseObject):
-    def __init__(self, api_key, id, linodeid, action, label, entered, started,
+    def __init__(self, api_key, id, linode_id, action, label, entered, started,
                  finish, duration, message, success):
         super(Job, self).__init__(api_key, id)
 
-        self.linodeid = id
+        self.linode_id = linode_id
         self.action = action
         self.label = label
         self.entered = entered
@@ -23,7 +23,7 @@ class Job(base.BaseObject):
         return cls(
             api_key,
             id=data['JOBID'],
-            linodeid=data['LINODEID'],
+            linode_id=data['LINODEID'],
             action=data['ACTION'],
             label=data['LABEL'],
             entered=base.convert_to_date(data['ENTERED_DT']),
