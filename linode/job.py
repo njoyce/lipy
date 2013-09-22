@@ -3,6 +3,11 @@ import time
 from . import base
 
 
+class JobError(Exception):
+    def __init__(self, job):
+        self.job = job
+
+
 class Job(base.BaseObject):
     def __init__(self, api_key, id, linode_id, action, label, entered, started,
                  finish, duration, message, success):
@@ -45,6 +50,9 @@ class Job(base.BaseObject):
 
         self.__dict__.clear()
         self.__dict__.update(finished_job.__dict__)
+
+        if not self.success:
+            raise JobError(self)
 
 
 def convert_to_job_id(value):
