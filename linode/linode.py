@@ -61,6 +61,15 @@ class Linode(base.BaseObject):
         """
         return boot_linode(self.api_key, self.id, block=block)
 
+    def delete(self, skip_checks=False):
+        """
+        Delete the linode. By default the Linode API will not delete a running
+        instance.
+
+        :param skip_checks: Skip the checks before deleting the instance
+        """
+        delete_linode(self.api_key, self.id, skip_checks)
+
     def get_public_ip(self):
         for addr in self.get_ips():
             if addr.public:
