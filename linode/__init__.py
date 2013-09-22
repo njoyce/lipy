@@ -1,11 +1,17 @@
-from . import linode
+from .datacenter import get_datacenter
+from .distribution import get_distribution
+from .kernel import get_kernel
+from .plan import get_plan
+from .provision import provision
+from .linode import list_linodes, get_by_id
 
 
-boot = linode.boot_linode
-clone = linode.clone_linode
-create = linode.create_linode
-delete = linode.delete_linode
-reboot = linode.reboot_linode
-resize = linode.resize_linode
-shutdown = linode.shutdown_linode
-update = linode.update_linode
+__all__ = [
+    'list_linodes',
+    'get_by_id',
+    'get_datacenter',
+    'get_distribution',
+    'get_kernel',
+    'get_plan',
+    'provision'
+]
