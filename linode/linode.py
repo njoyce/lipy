@@ -29,7 +29,7 @@ class Linode(base.BaseObject):
         if not self.plan_id:
             return
 
-        self._plan = plan.get_plan(self.plan_id)
+        self._plan = plan.get_plan(self.api_key, self.plan_id)
 
         return self._plan
 
