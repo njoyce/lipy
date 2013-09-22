@@ -38,7 +38,7 @@ class Job(base.BaseObject):
         """
         Wait for the job to finish
         """
-        if self.finished:
+        if self.finish:
             return self.job
 
         finished_job = waitany(self.api_key, self.linode_id, self.id)
@@ -60,6 +60,7 @@ def convert_to_job_id(value):
 def get(api_key, linode_id, *jobs, **kwargs):
     job_ids = map(convert_to_job_id, jobs)
     pending = kwargs.get('pending', None)
+    multiple = kwargs.pop('multiple', False)
 
     batcher = base.APIBatcher(api_key)
 
@@ -83,11 +84,19 @@ def get(api_key, linode_id, *jobs, **kwargs):
         try:
             data = result[0]
         except IndexError:
-            yield None
+            data = None
 
-            continue
+        if not data:
+            value = None
+        else:
+            value = Job.from_json(api_key, data)
 
-        yield Job.from_json(api_key, data)
+        jobs.append(value)
+
+    if len(jobs) == 1 and not multiple:
+        return jobs[0]
+
+    return jobs
 
 
 def waitall(api_key, linode_id, *jobs):
@@ -100,9 +109,9 @@ def waitall(api_key, linode_id, *jobs):
     job_ids = map(convert_to_job_id, jobs)
 
     while True:
-        pending_jobs = get(api_key, linode_id, *job_ids)
+        pending_jobs = get(api_key, linode_id, *job_ids, multiple=True)
 
-        if all(filter(lambda job: bool(job.finished), pending_jobs)):
+        if all(filter(lambda job: bool(job.finish), pending_jobs)):
             # all jobs are finished
             return jobs
 
@@ -116,10 +125,10 @@ def waitany(api_key, linode_id, *jobs):
     job_ids = map(convert_to_job_id, jobs)
 
     while True:
-        pending_jobs = get(api_key, linode_id, *job_ids)
+        pending_jobs = get(api_key, linode_id, *job_ids, multiple=True)
 
         for job in pending_jobs:
-            if job.finished:
+            if job.finish:
                 return job
 
         time.sleep(5)
